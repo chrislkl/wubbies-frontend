@@ -8,6 +8,7 @@ export default defineConfig({
       // redirect any request from /roll or /wallet to your backend
       '/roll': 'http://localhost:3000',
       '/wallet': 'http://localhost:3000',
+      "/images":"http://localhost:3000",
     }
   }
 })
