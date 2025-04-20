@@ -6,9 +6,17 @@ export default function App() {
   const [wallet, setWallet] = useState<Wubbie[]>([])
 
   async function loadWallet() {
-    const res = await fetch('/wallet')
-    const json = await res.json()
-    setWallet(json.wallet)
+    try {
+      const res = await fetch('/wallet')
+      if (!res.ok) {
+        setWallet([])
+        return
+      }
+      const json = await res.json()
+      setWallet(json.wallet ?? [])
+    } catch {
+      setWallet([])
+    }
   }
 
   async function doRoll() {
