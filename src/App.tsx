@@ -21,7 +21,7 @@ export default function App() {
     const token = await getToken()
     if (!userId) return
     try {
-      const res = await fetch('/wallet', { headers: { 'Authorization': `Bearer ${token}` } })
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/wallet`, { headers: { 'Authorization': `Bearer ${token}` } })
       console.log(res)
       const json = await res.json()
       setWallet(json.wallet ?? [])
@@ -34,7 +34,7 @@ export default function App() {
   async function doRoll() {
     const token = await getToken()
     if (!userId) return
-    const res = await fetch('/roll', {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/roll`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
