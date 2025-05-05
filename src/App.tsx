@@ -73,7 +73,7 @@ export default function App() {
         {rolled && (
           <div style={{ marginTop: 10 }}>
             <h3>You got:</h3>
-            <img src={rolled.imageUrl} alt={rolled.name} width={100} />
+            <img src={`${import.meta.env.VITE_API_BASE_URL}${rolled.imageUrl}`} alt={rolled.name} width={100} />
             <p>{rolled.name} ({rolled.rarity})</p>
           </div>
         )}
@@ -87,7 +87,7 @@ export default function App() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
               {wallet.map(w => (
                 <div key={w.id} style={{ textAlign: 'center' }}>
-                  <img src={w.imageUrl} alt={w.name} width={60} />
+                  <img src={`${import.meta.env.VITE_API_BASE_URL}${w.imageUrl}`} alt={w.name} width={60} />
                   <div>{w.name}</div>
                 </div>
               ))}
