@@ -17,11 +17,15 @@ export default function App() {
   const userId = user?.id 
   const { getToken } = useAuth()
 
+  const API_BASE = import.meta.env.DEV
+  ? "http://localhost:3000"
+  : "https://wubbies-backend.vercel.app";
+
   async function loadWallet() {
     const token = await getToken()
     if (!userId) return
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/wallet`, { headers: { 'Authorization': `Bearer ${token}` } })
+      const res = await fetch(`${API_BASE}/wallet`, { headers: { 'Authorization': `Bearer ${token}` } })
       console.log(res)
       const json = await res.json()
       setWallet(json.wallet ?? [])
@@ -34,7 +38,7 @@ export default function App() {
   async function doRoll() {
     const token = await getToken()
     if (!userId) return
-    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/roll`, {
+    const res = await fetch(`${API_BASE}/roll`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
