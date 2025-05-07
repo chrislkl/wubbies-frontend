@@ -20,7 +20,7 @@ export default function App() {
 
   const API_BASE = import.meta.env.DEV
   ? "http://localhost:3000"
-  : "https://wubbies-backend.vercel.app";
+  : "https://wubbies-backend.onrender.com";
 
   async function loadWallet() {
     const token = await getToken()
