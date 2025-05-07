@@ -200,3 +200,22 @@ body {
   font-family: 'Fredoka', sans-serif;
   letter-spacing: 1px;
 }
+
+.app-footer {
+  margin-top: 2rem;
+  padding: 1rem;
+  text-align: center;
+  color: white;
+  font-size: 0.9rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.app-footer a {
+  color: white;
+  margin: 0 1rem;
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  text-decoration: underline;
+}

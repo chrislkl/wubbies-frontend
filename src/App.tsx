@@ -200,6 +200,22 @@ export default function App() {
             <p>You’re currently playing as a guest!!! Sign in to save your Wubbies permanently!</p>
           </div>
         )}
+        <footer className="app-footer">
+          <p>
+            <a href="https://read.cv/chrislew" target="_blank" rel="noreferrer">
+              Read.cv
+            </a>
+            <span> | </span>
+            <a href="https://www.linkedin.com/in/christopher-lew-kew-lin/" target="_blank" rel="noreferrer">
+              LinkedIn
+            </a>
+            <span> | </span>
+            <a href="https://github.com/chrislkl" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+          </p>
+        </footer>
+
     </div>
   )  
 }
