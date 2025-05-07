@@ -96,7 +96,7 @@ export default function App() {
         <div className="box-container">
           <div className="roll-button">
             <img
-              src="../../public/images/wubbie-capsule.png"
+              src={API_BASE + "/images/wubbie-capsule.png"}
               alt="Roll your Wubbie"
               onClick={doRoll}
               className="roll-image"
