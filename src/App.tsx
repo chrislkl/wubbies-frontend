@@ -122,7 +122,7 @@ export default function App() {
           textAlign: 'center',
           fontWeight: 'bold'
         }}>
-          The Wubbies server is starting up. Please wait ~1 minute and try again!
+          The Wubbies server is starting up. Please wait ~1 minute, reload and try again!
         </div>
       )}
       
