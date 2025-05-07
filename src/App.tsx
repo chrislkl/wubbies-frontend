@@ -14,6 +14,7 @@ export default function App() {
   const [rolled, setRolled] = useState<Wubbie | null>(null)
   const [wallet, setWallet] = useState<Wubbie[]>([])
   const [isFading, setIsFading] = useState(false)
+  const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
   const { user } = useUser()             
   const userId = user?.id 
   const { getToken } = useAuth()
@@ -61,6 +62,20 @@ export default function App() {
   }
 
   useEffect(() => {
+    async function checkBackend() {
+      try {
+        const res = await fetch(`${API_BASE}/`);
+        if (!res.ok) throw new Error('Not OK');
+        setBackendOnline(true);
+      } catch {
+        setBackendOnline(false);
+      }
+    }
+  
+    checkBackend();
+  }, []);  
+
+  useEffect(() => {
     if (userId) {
       loadWallet()
     }
@@ -97,15 +112,27 @@ export default function App() {
           </div>
         </SignedOut>
       </header>
-  
+      {backendOnline === false && (
+        <div style={{ 
+          color: 'white', 
+          backgroundColor: 'rgba(255, 0, 0, 0.2)', 
+          padding: '1rem', 
+          marginBottom: '1rem', 
+          borderRadius: '8px', 
+          textAlign: 'center',
+          fontWeight: 'bold'
+        }}>
+          The Wubbies server is starting up. Please wait ~1 minute and try again!
+        </div>
+      )}
       
         <div className="box-container">
           <div className="roll-button">
             <img
               src="/images/wubbie-capsule.png"
               alt="Roll your Wubbie"
-              onClick={doRoll}
-              className="roll-image"
+              onClick={backendOnline === false ? undefined : doRoll}
+              className={`roll-image ${backendOnline === false ? 'disabled' : ''}`}
             />
             <div className="roll-button-desc">
               <p> Click to Unbox </p>

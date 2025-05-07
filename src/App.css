@@ -72,6 +72,13 @@ body {
   transform: scale(0.98);
 }
 
+.roll-image.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+
 .roll-button-desc {
   padding-top: 10px;
   text-align: center;
