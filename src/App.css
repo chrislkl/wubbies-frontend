@@ -21,6 +21,20 @@
   background: #444;
 }
 
+.signin-container button {
+  background: #222;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.signin-container button:hover {
+  background: #444;
+}
+
 body {
   background-color: #4d6db6;
   font-family: 'Fredoka', sans-serif;
