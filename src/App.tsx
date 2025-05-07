@@ -38,27 +38,32 @@ export default function App() {
 
   async function doRoll() {
     const token = await getToken()
-    if (!userId) return
 
     setIsFading(true)
     await new Promise(res => setTimeout(res, 400))
 
     const res = await fetch(`${API_BASE}/roll`, {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
       body: '{}'
     })
     const json = await res.json()
     setRolled(json.wubbie)
     setIsFading(false)
-    loadWallet()
+    if (userId) {
+      loadWallet()
+    } else {
+      setWallet(prev => [...prev, json.wubbie])  // Temp guest wallet
+    }
   }
 
   useEffect(() => {
-    loadWallet()
+    if (userId) {
+      loadWallet()
+    }
   }, [userId])
 
   function getRarityStars(rarity: string): number {
@@ -84,15 +89,16 @@ export default function App() {
             </SignOutButton>
           </div>
         </SignedIn>
+        <SignedOut>
+          <div className="signin-container">
+            <SignInButton mode="modal">
+              <button>Sign In</button>
+            </SignInButton>
+          </div>
+        </SignedOut>
       </header>
-
-      <SignedOut>
-        <SignInButton mode="modal">
-          <button>Sign In</button>
-        </SignInButton>
-      </SignedOut>
   
-      <SignedIn>
+      
         <div className="box-container">
           <div className="roll-button">
             <img
@@ -158,7 +164,15 @@ export default function App() {
             </div>
           )
         }
-      </SignedIn>
+        {!userId && (
+          <div style={{ 
+            marginTop: '1rem', 
+            color: 'white', 
+            textShadow: '1px 1px 3px rgba(0,0,0,5)' 
+          }}>
+            <p>You’re currently playing as a guest!!! Sign in to save your Wubbies permanently!</p>
+          </div>
+        )}
     </div>
   )  
 }
