@@ -6,13 +6,14 @@ import {
   useUser, 
   useAuth
 } from '@clerk/clerk-react'
-
+import './App.css'
 import { useState, useEffect } from 'react'
 import { Wubbie } from './types'
 
 export default function App() {
   const [rolled, setRolled] = useState<Wubbie | null>(null)
   const [wallet, setWallet] = useState<Wubbie[]>([])
+  const [isFading, setIsFading] = useState(false)
   const { user } = useUser()             
   const userId = user?.id 
   const { getToken } = useAuth()
@@ -38,6 +39,10 @@ export default function App() {
   async function doRoll() {
     const token = await getToken()
     if (!userId) return
+
+    setIsFading(true)
+    await new Promise(res => setTimeout(res, 400))
+
     const res = await fetch(`${API_BASE}/roll`, {
       method: 'POST',
       headers: { 
@@ -48,6 +53,7 @@ export default function App() {
     })
     const json = await res.json()
     setRolled(json.wubbie)
+    setIsFading(false)
     loadWallet()
   }
 
@@ -55,43 +61,97 @@ export default function App() {
     loadWallet()
   }, [userId])
 
+  function getRarityStars(rarity: string): number {
+    switch (rarity.toLowerCase()) {
+      case 'legendary': return 5
+      case 'epic': return 4
+      case 'rare': return 3
+      case 'uncommon': return 2
+      case 'common': return 1
+      default: return 0
+    }
+  }
+  
+
   return (
-    <div style={{ padding: 20 }}>
+    <div className="app-container">
+      <header className="app-header">
+        <h1>Wubbies</h1>
+        <SignedIn>
+          <div className="signout-container">
+            <SignOutButton>
+              <button>Sign Out</button>
+            </SignOutButton>
+          </div>
+        </SignedIn>
+      </header>
+
       <SignedOut>
         <SignInButton mode="modal">
           <button>Sign In</button>
         </SignInButton>
       </SignedOut>
-
+  
       <SignedIn>
-        <div style={{ marginBottom: 20 }}>
-          <SignOutButton>
-            <button>Sign Out</button>
-          </SignOutButton>
-        </div>
-
-        <button onClick={doRoll} disabled={!userId}>
-          Roll your Wubbie
-        </button>
-
-        {rolled && (
-          <div style={{ marginTop: 10 }}>
-            <h3>You got:</h3>
-            <img src={`${import.meta.env.VITE_API_BASE_URL}${rolled.imageUrl}`} alt={rolled.name} width={100} />
-            <p>{rolled.name} ({rolled.rarity})</p>
+        <div className="box-container">
+          <div className="roll-button">
+            <img
+              src="../../public/images/wubbie-capsule.png"
+              alt="Roll your Wubbie"
+              onClick={doRoll}
+              className="roll-image"
+            />
+            <div className="roll-button-desc">
+              <p> Click to Unbox </p>
+            </div>
           </div>
-        )}
 
-        <hr style={{ margin: '20px 0' }} />
-
-        <h2>Your Collection</h2>
+          {isFading && (
+            <div className="rolling-overlay">
+              <p>Unboxing...</p>
+            </div>
+          )}
+          <div className={`rolled-container ${rolled && !isFading ? 'fade-in' : 'fade-out'}`}>
+            {rolled && (
+              <>
+                <img
+                  className="rolled-image"
+                  src={`${API_BASE}${rolled.imageUrl}`}
+                  alt={rolled.name}
+                />
+                <div className="rolled-info">
+                  <p>{rolled.name} ({rolled.rarity})</p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+  
+        <hr className="divider" />
+        
+        <h2 style={{ 
+          color: 'white', 
+          textShadow: '1px 1px 3px rgba(0, 0, 0, 5)' 
+        }}>
+          Wubbie Wallet
+        </h2>
         {wallet.length === 0
-          ? <p>Your collection is empty. Roll to get started!</p>
+          ? <p style={{ 
+            color: 'white', 
+            textShadow: '1px 1px 3px rgba(0, 0, 0, 5)' 
+          }} >Your wallet is empty. Unbox a wubbie to get started!</p>
           : (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+            <div className="wallet-container">
               {wallet.map(w => (
-                <div key={w.id} style={{ textAlign: 'center' }}>
-                  <img src={`${import.meta.env.VITE_API_BASE_URL}${w.imageUrl}`} alt={w.name} width={60} />
+                <div key={w.id} 
+                  className="wallet-item"
+                  data-rarity={w.rarity.toLowerCase()}>
+                  <img src={`${API_BASE}${w.imageUrl}`} alt={w.name} />
+                  <div className="rarity-stars">
+                    {Array(getRarityStars(w.rarity)).fill('⭐').map((star, i) => (
+                      <span key={i}>{star}</span>
+                    ))}
+                  </div>
                   <div>{w.name}</div>
                 </div>
               ))}
@@ -100,5 +160,5 @@ export default function App() {
         }
       </SignedIn>
     </div>
-  )
+  )  
 }
