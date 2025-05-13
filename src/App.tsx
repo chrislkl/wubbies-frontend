@@ -62,18 +62,31 @@ export default function App() {
   }
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function checkBackend() {
+      const innerController = new AbortController();
+      const timeoutId = setTimeout(() => innerController.abort(), 3000); // 3-second timeout
+
       try {
-        const res = await fetch(`${API_BASE}/`);
+        const res = await fetch(`${API_BASE}/`, { signal: innerController.signal });
+        clearTimeout(timeoutId);
         if (!res.ok) throw new Error('Not OK');
         setBackendOnline(true);
       } catch {
         setBackendOnline(false);
       }
     }
-  
+
     checkBackend();
-  }, []);  
+
+    const intervalId = setInterval(checkBackend, 10 * 60 * 1000); // 10 minutes
+
+    return () => {
+      clearInterval(intervalId);
+      controller.abort();
+    };
+  }, []);
 
   useEffect(() => {
     if (userId) {
