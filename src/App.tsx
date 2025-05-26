@@ -15,6 +15,7 @@ export default function App() {
   const [wallet, setWallet] = useState<Wubbie[]>([])
   const [isFading, setIsFading] = useState(false)
   const [backendOnline, setBackendOnline] = useState<boolean | null>(null);
+  const [sortBy, setSortBy] = useState<'rarity' | 'frequency'>('rarity');
   const { user } = useUser()             
   const userId = user?.id 
   const { getToken } = useAuth()
@@ -181,24 +182,60 @@ export default function App() {
         }}>
           Wubbie Wallet
         </h2>
+        <div style={{ marginBottom: '1rem', color: 'white' }}>
+          <label className="sort-label">
+            Sort by:&nbsp;
+            <select
+              className="sort-select"
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as 'rarity' | 'frequency')}
+              style={{ marginRight: '1rem' }}
+            >
+              <option value="rarity">Rarity</option>
+              <option value="frequency">Frequency</option>
+            </select>
+          </label>
+        </div>
         {wallet.length === 0
           ? <p style={{ 
-            color: 'white', 
-            textShadow: '1px 1px 3px rgba(0, 0, 0, 5)' 
-          }} >Your wallet is empty. Unbox a wubbie to get started!</p>
+              color: 'white', 
+              textShadow: '1px 1px 3px rgba(0, 0, 0, 5)' 
+            }} >Your wallet is empty. Unbox a wubbie to get started!</p>
           : (
             <div className="wallet-container">
-              {wallet.map(w => (
-                <div key={w.id} 
+              {Object.values(
+                wallet.reduce<Record<string, { wubbie: Wubbie, count: number }>>((acc, w) => {
+                  if (acc[w.name]) {
+                    acc[w.name].count += 1;
+                  } else {
+                    acc[w.name] = { wubbie: w, count: 1 };
+                  }
+                  return acc;
+                }, {})
+              )
+              .sort((a, b) => {
+                if (sortBy === "rarity") {
+                  // Higher rarity first, then name
+                  return getRarityStars(b.wubbie.rarity) - getRarityStars(a.wubbie.rarity) ||
+                         a.wubbie.name.localeCompare(b.wubbie.name);
+                } else {
+                  // Higher frequency first, then name
+                  return b.count - a.count ||
+                         a.wubbie.name.localeCompare(b.wubbie.name);
+                }
+              })
+              .map(({ wubbie, count }) => (
+                <div key={wubbie.name} 
                   className="wallet-item"
-                  data-rarity={w.rarity.toLowerCase()}>
-                  <img src={`${API_BASE}${w.imageUrl}`} alt={w.name} />
+                  data-rarity={wubbie.rarity.toLowerCase()}>
+                  <img src={`${API_BASE}${wubbie.imageUrl}`} alt={wubbie.name} />
                   <div className="rarity-stars">
-                    {Array(getRarityStars(w.rarity)).fill('⭐').map((star, i) => (
+                    {Array(getRarityStars(wubbie.rarity)).fill('⭐').map((star, i) => (
                       <span key={i}>{star}</span>
                     ))}
                   </div>
-                  <div>{w.name}</div>
+                  <div>{wubbie.name}</div>
+                  <div style={{ color: 'red', fontWeight: 'bold' }}>x{count}</div>
                 </div>
               ))}
             </div>

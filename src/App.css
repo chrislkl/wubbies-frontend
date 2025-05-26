@@ -219,3 +219,31 @@ body {
 .app-footer a:hover {
   text-decoration: underline;
 }
+
+.sort-label {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+.sort-select {
+  padding: 6px 18px 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #888;
+  background: #222;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  outline: none;
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.15);
+  transition: border-color 0.2s;
+  appearance: none;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.sort-select:focus, .sort-select:hover {
+  border-color: #646cff;
+  background: #333;
+}
