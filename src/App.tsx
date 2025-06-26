@@ -22,7 +22,7 @@ export default function App() {
 
   const API_BASE = import.meta.env.DEV
   ? "http://localhost:3000"
-  : "https://wubbies-backend.onrender.com";
+  : "wubbies-backend-production.up.railway.app";
 
   async function loadWallet() {
     const token = await getToken()
